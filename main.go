@@ -33,10 +33,10 @@ var (
 
 // sourceExtensions lists file extensions to scan.
 var sourceExtensions = map[string]bool{
-	".go":   true,
-	".py":   true,
-	".js":   true,
-	".ts":   true,
+	".go": true,
+	".py": true,
+	".js": true,
+	".ts": true,
 }
 
 // configExtensions lists config file extensions to scan.
@@ -148,7 +148,7 @@ func scanFileForDetection(dc *detectContext, filePath string) {
 	if err != nil {
 		return
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -226,12 +226,17 @@ func emitDetectionFindings(resp *sdk.ResponseBuilder, dc *detectContext) {
 }
 
 func main() {
+	os.Exit(run())
+}
+
+func run() int {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
 	srv := buildServer()
 	if err := srv.Serve(ctx); err != nil {
 		fmt.Fprintf(os.Stderr, "nox-plugin-detect-ready: %v\n", err)
-		os.Exit(1)
+		return 1
 	}
+	return 0
 }

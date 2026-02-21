@@ -1,0 +1,7 @@
+name: nox-plugin-detect-ready
+version: 0.1.0
+track: incident-readiness
+description: Detection readiness assessment for security observability
+tools:
+  - name: scan
+    description: Scan source and config files for detection readiness indicators
